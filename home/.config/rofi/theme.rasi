@@ -1,0 +1,171 @@
+/* Asura Linux style Rofi theme (CenterLauncher / AppLauncher) */
+@import "/home/samerim/.config/rofi/colors.rasi"
+
+* {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    fullscreen:       false;
+    width:            540px;
+    x-offset:         0px;
+    y-offset:         0px;
+
+    enabled:          true;
+    margin:           0px;
+    padding:          0px;
+    border:           1px solid;
+    border-radius:    20px;
+    border-color:     @primary-border;
+    background-color: @bg;
+    cursor:           "default";
+}
+
+mainbox {
+    enabled:          true;
+    spacing:          12px;
+    margin:           0px;
+    padding:          16px 14px 14px 14px;
+    border:           0px solid;
+    border-radius:    0px;
+    background-color: transparent;
+    children:         [ "inputbar", "message", "listview" ];
+}
+
+inputbar {
+    enabled:          true;
+    spacing:          10px;
+    margin:           0px;
+    padding:          12px 16px;
+    border:           1px solid;
+    border-radius:    22px;
+    border-color:     @primary-focus;
+    background-color: @bg-surface;
+    text-color:       @primary-bright;
+    children:         [ "prompt", "entry", "num-filtered-rows" ];
+}
+
+prompt {
+    enabled:          true;
+    font:             "MesloLGL Nerd Font 12";
+    background-color: transparent;
+    text-color:       @primary-bright;
+    vertical-align:   0.5;
+}
+
+entry {
+    enabled:          true;
+    background-color: transparent;
+    text-color:       @fg;
+    cursor:           text;
+    placeholder:      "Поиск приложений или =выражение…";
+    placeholder-color: @fg-muted;
+    vertical-align:   0.5;
+}
+
+num-filtered-rows {
+    enabled:          true;
+    expand:           false;
+    background-color: @primary-soft;
+    text-color:       @primary-bright;
+    padding:          2px 9px;
+    border-radius:    10px;
+    font:             "Noto Sans Bold 8.5";
+    vertical-align:   0.5;
+}
+
+message {
+    enabled:          true;
+    margin:           0px;
+    padding:          8px 14px;
+    border:           0px solid;
+    border-radius:    16px;
+    background-color: @bg-surface;
+    text-color:       @fg;
+}
+
+textbox {
+    background-color: transparent;
+    text-color:       @fg;
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+}
+
+listview {
+    enabled:          true;
+    columns:          1;
+    lines:            8;
+    cycle:            true;
+    dynamic:          true;
+    scrollbar:        false;
+    layout:           vertical;
+    reverse:          false;
+    fixed-height:     false;
+    fixed-columns:    true;
+
+    spacing:          4px;
+    margin:           0px;
+    padding:          0px;
+    border:           0px solid;
+    background-color: transparent;
+    text-color:       @fg;
+    cursor:           "default";
+}
+
+element {
+    enabled:          true;
+    spacing:          12px;
+    margin:           0px;
+    padding:          7px 12px;
+    border:           0px solid;
+    border-radius:    22px;
+    background-color: transparent;
+    text-color:       @fg;
+    orientation:      horizontal;
+    cursor:           pointer;
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element normal.active,
+element alternate.active {
+    background-color: @primary-soft;
+    text-color:       @primary-bright;
+}
+
+element selected.normal {
+    background-color: @primary;
+    text-color:       @on-primary;
+    padding:          7px 12px 7px 16px;
+}
+
+element selected.active {
+    background-color: @secondary;
+    text-color:       @on-primary;
+    padding:          7px 12px 7px 16px;
+}
+
+element-icon {
+    background-color: transparent;
+    text-color:       inherit;
+    size:             34px;
+    vertical-align:   0.5;
+    cursor:           inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    highlight:        bold;
+    cursor:           inherit;
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+}

@@ -1,0 +1,6 @@
+**/target/
+*.bak*
+*.log
+*.tmp
+.DS_Store
+*.part

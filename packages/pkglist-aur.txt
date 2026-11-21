@@ -1,0 +1,7 @@
+ai.storyteller.deckcraft
+ai.storyteller.gridcraft
+ai.storyteller.pdfcraft
+antigravity
+artcraft-launcher-bin
+throne-bin
+wordcraft-bin

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "packs": [
+    {
+      "locale": "ru",
+      "name": "Русский",
+      "release": "language-packs-2",
+      "version": "20467b63558f04fe075e83aaea501bd10f7fa684",
+      "licence": "LicenseRef-BSD-Lebedev AND LPPL-1.3c",
+      "sha256": "862bce34075d1e61b033ba7b519e0bbe5917de8138bca0b49ac7a435442061f5",
+      "size": 506685
+    }
+  ]
+}

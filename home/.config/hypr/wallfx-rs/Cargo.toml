@@ -1,0 +1,22 @@
+[package]
+name = "wallfx"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cairo-rs = "0.18"
+gdk = { version = "0.18", features = ["v3_24"] }
+gdk-pixbuf = "0.18"
+glib = "0.18"
+glow = "0.18"
+gtk = { version = "0.18", features = ["v3_24"] }
+gtk-layer-shell = { version = "0.8.2", features = ["v0_6"] }
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
+libc = "0.2"
+ort = { version = "2.0.0-rc.15", default-features = false, features = ["std", "download-binaries", "tls-native", "copy-dylibs"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

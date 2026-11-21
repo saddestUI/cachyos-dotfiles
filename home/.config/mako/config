@@ -1,0 +1,36 @@
+# Asura-style notification cards (synced to wallpaper)
+
+font=Noto Sans 10
+width=360
+height=110
+anchor=top-right
+outer-margin=16,20,0,0
+margin=8
+padding=14
+
+border-size=1
+border-radius=16
+
+background-color=#12151dd9
+text-color=#e6edf3
+border-color=#3b62cc66
+
+icons=1
+icon-location=left
+max-icon-size=42
+icon-border-radius=21
+
+markup=1
+format=<b><span foreground="#3b62cc" size="small">%a</span></b>\n<b>%s</b>\n<span foreground="#b0bac5" size="small">%b</span>
+
+default-timeout=4500
+ignore-timeout=0
+layer=overlay
+
+[urgency=low]
+border-color=#3b62cc33
+default-timeout=3000
+
+[urgency=high]
+border-color=#f7768ecc
+default-timeout=0

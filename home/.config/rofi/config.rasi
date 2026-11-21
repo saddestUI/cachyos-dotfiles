@@ -1,0 +1,28 @@
+configuration {
+    modi:                       "druncalc,run,window";
+    show-icons:                 true;
+    icon-theme:                 "Adwaita";
+    display-druncalc:           "󰍉";
+    display-drun:               "󰍉";
+    display-run:                "";
+    display-window:             "";
+    kb-move-front:              "";
+    kb-clear-line:              "Control+a,Control+w";
+    drun-display-format:        "{name}";
+    window-format:              "{w} · {c} · {t}";
+    disable-history:            false;
+    sort:                       true;
+    sorting-method:             "fzf";
+    matching:                   "fuzzy";
+    case-sensitive:             false;
+    cycle:                      true;
+    hover-select:               true;
+    me-select-entry:            "";
+    me-accept-entry:            "MousePrimary";
+    scroll-method:              0;
+    terminal:                   "kitty";
+    font:                       "Noto Sans 10.5";
+    click-to-exit:              true;
+}
+
+@theme "/home/samerim/.config/rofi/theme.rasi"

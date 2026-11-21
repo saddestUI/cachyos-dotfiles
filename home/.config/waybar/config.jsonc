@@ -1,0 +1,217 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "reload_style_on_change": true,
+  "margin-top": 8,
+  "margin-bottom": 0,
+  "margin-left": 180,
+  "margin-right": 180,
+  "spacing": 2,
+
+  "modules-left": [
+    "custom/launcher",
+    "hyprland/workspaces",
+    "tray"
+  ],
+
+  "modules-center": [
+    "hyprland/submap",
+    "mpris",
+    "hyprland/window"
+  ],
+
+  "modules-right": [
+    "clock",
+    "hyprland/language",
+    "pulseaudio",
+    "backlight",
+    "bluetooth",
+    "network",
+    "battery",
+    "power-profiles-daemon",
+    "custom/power"
+  ],
+
+  "custom/launcher": {
+    "format": "󰀻",
+    "on-click": "~/.local/bin/asura-launcher",
+    "on-click-right": "~/.local/bin/wallfx picker",
+    "tooltip": false
+  },
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "1": "I",
+      "2": "II",
+      "3": "III",
+      "4": "IV",
+      "5": "V",
+      "6": "VI",
+      "7": "VII",
+      "8": "VIII",
+      "9": "IX",
+      "10": "X",
+      "default": "•"
+    },
+    "on-click": "activate",
+    "on-scroll-up": "hyprctl dispatch \"hl.dsp.focus({ workspace = 'r-1' })\"",
+    "on-scroll-down": "hyprctl dispatch \"hl.dsp.focus({ workspace = 'r+1' })\"",
+    "sort-by-number": true
+  },
+
+  "tray": {
+    "icon-size": 14,
+    "spacing": 6
+  },
+
+  "hyprland/submap": {
+    "format": "󰌌 {}",
+    "max-length": 12,
+    "tooltip": false
+  },
+
+  "mpris": {
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} {dynamic}",
+    "player-icons": {
+      "default": "󰎈",
+      "firefox": "󰈹",
+      "vlc": "󰕼",
+      "spotify": "󰓇"
+    },
+    "status-icons": {
+      "paused": "󰏤",
+      "playing": "󰐊"
+    },
+    "title-len": 18,
+    "artist-len": 12,
+    "dynamic-len": 28,
+    "dynamic-order": ["title", "artist"],
+    "on-click": "playerctl play-pause",
+    "on-click-middle": "playerctl previous",
+    "on-click-right": "playerctl next",
+    "on-scroll-up": "playerctl next",
+    "on-scroll-down": "playerctl previous"
+  },
+
+  "hyprland/window": {
+    "format": "{title}",
+    "max-length": 28,
+    "separate-outputs": true,
+    "rewrite": {
+      "": ""
+    }
+  },
+
+  "clock": {
+    "format": "{:%H:%M • %a, %d/%m}",
+    "on-click": "~/.config/waybar/waybar-widgets calendar",
+    "tooltip": false
+  },
+
+  "hyprland/language": {
+    "format": "󰌌 {}",
+    "format-en": "EN",
+    "format-us": "EN",
+    "format-ru": "RU",
+    "on-click": "~/.config/waybar/waybar-widgets language",
+    "on-click-right": "hyprctl switchxkblayout all next",
+    "tooltip": true,
+    "tooltip-format": "{long}"
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-bluetooth": "󰂰 {volume}%",
+    "format-bluetooth-muted": "󰂲 0%",
+    "format-muted": "󰖁 0%",
+    "format-icons": {
+      "headphone": "󰋋",
+      "hands-free": "󰋎",
+      "headset": "󰋎",
+      "default": ["󰕿", "󰖀", "󰕾"]
+    },
+    "scroll-step": 5,
+    "on-click": "~/.config/waybar/waybar-widgets audio",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "tooltip-format": "{desc}\nГромкость: {volume}%"
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{icon} {percent}%",
+    "format-icons": ["󰃚", "󰃛", "󰃜", "󰃝", "󰃞", "󰃟", "󰃠"],
+    "on-click": "~/.config/waybar/waybar-widgets brightness",
+    "on-scroll-up": "~/.local/bin/smooth-brightness up 5",
+    "on-scroll-down": "~/.local/bin/smooth-brightness down 5",
+    "tooltip-format": "Яркость: {percent}%"
+  },
+
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-off": "󰂲",
+    "format-connected": "󰂱 {num_connections}",
+    "on-click": "~/.config/waybar/waybar-widgets bluetooth",
+    "tooltip-format": "Bluetooth: {status}",
+    "tooltip-format-on": "Bluetooth включён",
+    "tooltip-format-off": "Bluetooth выключен",
+    "tooltip-format-disabled": "Bluetooth отключён",
+    "tooltip-format-no-controller": "Адаптер Bluetooth не найден",
+    "tooltip-format-connected": "Подключено: {num_connections}\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "• {device_alias}",
+    "tooltip-format-enumerate-connected-battery": "• {device_alias} ({device_battery_percentage}%)"
+  },
+
+  "network": {
+    "format-wifi": "{icon}",
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format-ethernet": "󰈀 ETH",
+    "format-linked": "󰈀 No IP",
+    "format-disconnected": "󰖪",
+    "on-click": "~/.config/waybar/waybar-widgets network",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ifname}: {ipaddr}/{cidr}",
+    "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr}",
+    "tooltip-format-disconnected": "Сеть отключена"
+  },
+
+  "battery": {
+    "bat": "BAT1",
+    "adapter": "ADP1",
+    "interval": 15,
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "on-click": "~/.config/waybar/waybar-widgets power",
+    "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
+    "tooltip-format": "{timeTo}\nРазряд: {power:.1f} Вт",
+    "tooltip-format-charging": "{timeTo}\nЗарядка: {power:.1f} Вт",
+    "tooltip-format-plugged": "Питание от сети ({capacity}%)",
+    "tooltip-format-full": "Питание от сети · заряжено ({capacity}%)"
+  },
+
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "on-click": "~/.config/waybar/waybar-widgets power",
+    "tooltip-format": "Профиль: {profile}",
+    "tooltip": true,
+    "format-icons": {
+      "default": "󰾅",
+      "performance": "󱐋",
+      "balanced": "󰾅",
+      "power-saver": "󰌪"
+    }
+  },
+
+  "custom/power": {
+    "format": "󰐥",
+    "on-click": "~/.config/waybar/waybar-widgets power",
+    "tooltip": false
+  }
+}

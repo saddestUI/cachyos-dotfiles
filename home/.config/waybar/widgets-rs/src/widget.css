@@ -1,0 +1,368 @@
+@define-color primary #33ccff;
+@define-color secondary #00ff99;
+@define-color primary_soft rgba(51, 204, 255, 0.48);
+@define-color primary_hover rgba(51, 204, 255, 0.75);
+@define-color primary_border rgba(51, 204, 255, 0.22);
+@define-color primary_border_strong rgba(51, 204, 255, 0.42);
+@define-color primary_bg rgba(51, 204, 255, 0.14);
+@define-color fg_tint #e6edf3;
+@define-color fg_muted #8b949e;
+@define-color on_primary #0d1117;
+
+* {
+  font-family: "MesloLGL Nerd Font", "Noto Sans", sans-serif;
+  font-size: 12px;
+  color: @fg_tint;
+}
+
+window {
+  background-color: transparent;
+}
+
+.widget-root {
+  background-color: rgba(18, 21, 29, 0.94);
+  border: 1px solid @primary_border_strong;
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.widget-header {
+  margin-bottom: 10px;
+}
+
+.widget-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: @fg_tint;
+}
+
+.widget-subtitle {
+  font-size: 11px;
+  color: @fg_muted;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.row-btn {
+  background-color: rgba(255, 255, 255, 0.045);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 6px 10px;
+  background-image: none;
+  box-shadow: none;
+}
+
+.row-btn:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+}
+
+.row-btn.active {
+  background-color: @primary_bg;
+  border: 1px solid @primary_border_strong;
+}
+
+.pill-btn {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  padding: 4px 10px;
+  background-image: none;
+  box-shadow: none;
+  font-weight: 600;
+}
+
+.pill-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.pill-btn.active {
+  background: linear-gradient(135deg, @primary, @secondary);
+  color: @on_primary;
+  border-color: transparent;
+}
+
+.pill-btn.active label {
+  color: @on_primary;
+}
+
+.pill-btn.danger {
+  background-color: rgba(247, 118, 142, 0.18);
+  border-color: rgba(247, 118, 142, 0.45);
+  color: #f7768e;
+}
+
+.pill-btn.danger label {
+  color: #f7768e;
+}
+
+.icon-btn {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  padding: 3px 8px;
+  min-width: 24px;
+  min-height: 24px;
+  background-image: none;
+  box-shadow: none;
+  border: none;
+}
+
+.icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.13);
+}
+
+.icon-btn.muted {
+  background-color: rgba(247, 118, 142, 0.2);
+  color: #f7768e;
+}
+
+.icon-btn.muted label {
+  color: #f7768e;
+}
+
+scale trough {
+  min-height: 7px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+scale highlight {
+  min-height: 7px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, @primary, @secondary);
+}
+
+scale slider {
+  min-width: 14px;
+  min-height: 14px;
+  border-radius: 999px;
+  background-color: #e6edf3;
+  border: 2px solid @primary;
+  margin: -4px 0;
+  box-shadow: none;
+}
+
+progressbar trough {
+  min-height: 8px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+progressbar progress {
+  min-height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, @primary, @secondary);
+}
+
+switch {
+  background-color: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  min-width: 38px;
+  min-height: 20px;
+}
+
+switch:checked {
+  background: linear-gradient(90deg, @primary, @secondary);
+}
+
+switch slider {
+  background-color: #e6edf3;
+  border-radius: 999px;
+  min-width: 16px;
+  min-height: 16px;
+  margin: 2px;
+}
+
+entry {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid @primary_border_strong;
+  border-radius: 10px;
+  padding: 5px 8px;
+  color: @fg_tint;
+}
+
+.cal-clock {
+  font-size: 22px;
+  font-weight: 700;
+  color: @secondary;
+  letter-spacing: 0.5px;
+}
+
+.cal-date-selected {
+  font-size: 11px;
+  font-weight: 600;
+  color: @fg_tint;
+}
+
+.cal-today-pill {
+  background-color: @primary_bg;
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  border: 1px solid @primary_border_strong;
+  border-radius: 999px;
+  padding: 2px 9px;
+  min-height: 22px;
+}
+
+.cal-today-pill label {
+  font-size: 11px;
+  font-weight: 600;
+  color: @fg_tint;
+}
+
+.cal-today-pill:hover {
+  background-color: @primary_border;
+}
+
+.cal-nav-btn {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.cal-nav-btn label {
+  font-size: 15px;
+  font-weight: 700;
+  color: @fg_muted;
+}
+
+.cal-nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.cal-nav-btn:hover label {
+  color: @fg_tint;
+}
+
+.cal-month-btn {
+  padding: 3px 10px;
+  min-height: 28px;
+  border-radius: 8px;
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.cal-month-btn label {
+  font-size: 13px;
+  font-weight: 700;
+  color: @fg_tint;
+}
+
+.cal-month-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.cal-weekday {
+  font-size: 11px;
+  font-weight: 700;
+  color: @fg_muted;
+  padding: 2px 0 4px 0;
+}
+
+.cal-weekend-hdr {
+  color: @secondary;
+}
+
+.cal-day {
+  background-color: transparent;
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+  outline: none;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  padding: 0;
+  margin: 0;
+  min-width: 34px;
+  min-height: 34px;
+}
+
+.cal-day label {
+  font-size: 12px;
+  font-weight: 500;
+  color: @fg_tint;
+}
+
+.cal-day:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+}
+
+.cal-day.cal-weekend label {
+  color: @secondary;
+}
+
+.cal-day.cal-other {
+  opacity: 0.42;
+}
+
+.cal-day.cal-other label {
+  color: @fg_muted;
+}
+
+.cal-day.cal-other:hover {
+  opacity: 0.8;
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.cal-day.cal-today {
+  border-color: @primary;
+  background-color: @primary_bg;
+}
+
+.cal-day.cal-today label {
+  color: @fg_tint;
+  font-weight: 700;
+}
+
+.cal-day.cal-today:hover {
+  background-color: @primary_border;
+}
+
+.cal-day.cal-selected,
+.cal-day.cal-selected:hover {
+  background-color: @primary;
+  background-image: linear-gradient(135deg, @primary, @secondary);
+  border-color: transparent;
+}
+
+.cal-day.cal-selected label {
+  color: @on_primary;
+  font-weight: 700;
+}
+
+.cal-day.cal-today.cal-selected {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.accent {
+  color: @secondary;
+}
+
+.muted-text {
+  color: @fg_muted;
+}
+
+.warn-text {
+  color: #f6c177;
+}
+
+.danger-text {
+  color: #f7768e;
+}
