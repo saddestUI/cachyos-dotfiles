@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-CACHE_CURRENT="/home/samerim/.cache/wallfx/current"
-WAYBAR_CSS="/home/samerim/.config/waybar/colors.css"
-KITTY_THEME="/home/samerim/.config/kitty/theme.conf"
-OUT_FILE="/home/samerim/.config/hypr/hyprlock-theme.conf"
+CACHE_CURRENT="$HOME/.cache/wallfx/current"
+WAYBAR_CSS="$HOME/.config/waybar/colors.css"
+KITTY_THEME="$HOME/.config/kitty/theme.conf"
+OUT_FILE="$HOME/.config/hypr/hyprlock-theme.conf"
 
 # Defaults (blue_lake.png palette)
 BG="0f1116"

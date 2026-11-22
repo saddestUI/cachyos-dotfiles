@@ -27,9 +27,12 @@ pub enum Align {
 struct Monitor {
     name: String,
     width: i32,
+    height: i32,
     x: i32,
     y: i32,
     scale: f64,
+    #[serde(default)]
+    transform: i32,
     focused: bool,
 }
 
@@ -162,7 +165,7 @@ pub fn cleanup_pid() {
 pub fn load_css() {
     let colors_path = std::env::var_os("HOME")
         .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("/home/samerim"))
+        .unwrap_or_else(|| PathBuf::from("."))
         .join(".config/waybar/colors.css");
     let dynamic_colors = fs::read_to_string(colors_path).unwrap_or_default();
     let combined = format!("{CSS_DATA}\n{dynamic_colors}");
@@ -178,7 +181,31 @@ pub fn load_css() {
     }
 }
 
-fn get_popup_position(width: i32, fallback_align: Align) -> (i32, i32) {
+struct PopupPlacement {
+    top_margin: i32,
+    mon_w: i32,
+    bar_x: i32,
+    bar_w: i32,
+    cursor_cx: Option<i32>,
+    fallback_align: Align,
+}
+
+impl PopupPlacement {
+    fn left_for_width(&self, w: i32) -> i32 {
+        let max_left = (self.mon_w - w - 8).max(8);
+        let raw = if let Some(cx) = self.cursor_cx {
+            cx - w / 2
+        } else {
+            match self.fallback_align {
+                Align::Center => self.bar_x + (self.bar_w - w) / 2,
+                Align::Right => self.bar_x + self.bar_w - w,
+            }
+        };
+        raw.clamp(8, max_left)
+    }
+}
+
+fn get_popup_placement(fallback_align: Align) -> PopupPlacement {
     let mut top_margin = 42;
     let mut mon_x = 0;
     let mut mon_y = 0;
@@ -206,8 +233,13 @@ fn get_popup_position(width: i32, fallback_align: Align) -> (i32, i32) {
             if let Some(mon) = monitors.iter().find(|m| m.focused).or_else(|| monitors.first()) {
                 mon_x = mon.x;
                 mon_y = mon.y;
+                let raw_w = if mon.transform % 2 == 1 {
+                    mon.height
+                } else {
+                    mon.width
+                };
                 if mon.scale > 0.0 {
-                    mon_w = (mon.width as f64 / mon.scale) as i32;
+                    mon_w = ((raw_w as f64) / mon.scale).round() as i32;
                 }
                 if let Some(ml) = layers_map.get(&mon.name) {
                     'outer: for items in ml.levels.values() {
@@ -227,6 +259,7 @@ fn get_popup_position(width: i32, fallback_align: Align) -> (i32, i32) {
         }
     }
 
+    let mut cursor_cx = None;
     if let Some(out_c) = out_c {
         if let Ok(pos) = serde_json::from_str::<CursorPos>(&out_c) {
             let cx = pos.x - mon_x;
@@ -234,17 +267,19 @@ fn get_popup_position(width: i32, fallback_align: Align) -> (i32, i32) {
             let on_bar_x = cx >= (bar_x - 8) && cx <= (bar_x + bar_w + 8);
             let on_bar_y = cy >= (bar_y - 6) && cy <= (bar_y + bar_h + 10);
             if on_bar_x && on_bar_y {
-                let left = (cx - width / 2).clamp(8, (mon_w - width - 8).max(8));
-                return (top_margin, left);
+                cursor_cx = Some(cx);
             }
         }
     }
 
-    let left = match fallback_align {
-        Align::Center => (bar_x + (bar_w - width) / 2).max(8),
-        Align::Right => (bar_x + bar_w - width).clamp(8, (mon_w - width - 8).max(8)),
-    };
-    (top_margin, left)
+    PopupPlacement {
+        top_margin,
+        mon_w,
+        bar_x,
+        bar_w,
+        cursor_cx,
+        fallback_align,
+    }
 }
 
 pub struct WidgetPopup {
@@ -255,9 +290,12 @@ pub struct WidgetPopup {
 
 impl WidgetPopup {
     pub fn new(title: &str, icon: &str, align: Align, width: i32) -> Self {
+        let placement = get_popup_placement(align);
+        let eff_width = width.min((placement.mon_w - 16).max(200));
+
         let window = gtk::Window::new(gtk::WindowType::Toplevel);
         window.set_resizable(false);
-        window.set_default_size(width, -1);
+        window.set_default_size(eff_width, -1);
 
         window.init_layer_shell();
         window.set_layer(Layer::Overlay);
@@ -265,11 +303,23 @@ impl WidgetPopup {
         window.set_namespace("waybar-widget");
         window.set_keyboard_mode(KeyboardMode::OnDemand);
 
-        let (top_margin, left_margin) = get_popup_position(width, align);
+        let init_left = placement.left_for_width(eff_width);
         window.set_anchor(Edge::Top, true);
         window.set_anchor(Edge::Left, true);
-        window.set_layer_shell_margin(Edge::Top, top_margin);
-        window.set_layer_shell_margin(Edge::Left, left_margin);
+        window.set_layer_shell_margin(Edge::Top, placement.top_margin);
+        window.set_layer_shell_margin(Edge::Left, init_left);
+
+        let last_left = Cell::new(init_left);
+        window.connect_size_allocate(move |win, alloc| {
+            let actual_w = alloc.width();
+            if actual_w > 0 {
+                let target_left = placement.left_for_width(actual_w);
+                if target_left != last_left.get() {
+                    last_left.set(target_left);
+                    win.set_layer_shell_margin(Edge::Left, target_left);
+                }
+            }
+        });
 
         let has_focused = Rc::new(Cell::new(false));
         let focus_flag = has_focused.clone();
@@ -306,7 +356,7 @@ impl WidgetPopup {
 
         let root_box = gtk::Box::new(gtk::Orientation::Vertical, 8);
         root_box.style_context().add_class("widget-root");
-        root_box.set_size_request(width, -1);
+        root_box.set_size_request(eff_width, -1);
         window.add(&root_box);
 
         let header = gtk::Box::new(gtk::Orientation::Horizontal, 8);
@@ -352,5 +402,51 @@ pub fn make_section_label(text: &str) -> gtk::Label {
 pub fn clear_container(container: &gtk::Box) {
     for child in container.children() {
         container.remove(&child);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn clamps_popup_left_for_1920_1280_and_rotated() {
+        let p_1920 = PopupPlacement {
+            top_margin: 48,
+            mon_w: 1920,
+            bar_x: 180,
+            bar_w: 1560,
+            cursor_cx: Some(1650),
+            fallback_align: Align::Right,
+        };
+        assert_eq!(p_1920.left_for_width(320), 1490);
+        // Even if actual allocated width balloons to 600px, right edge stays within 1920 - 8.
+        assert_eq!(p_1920.left_for_width(600), 1312);
+
+        let p_1280_fallback = PopupPlacement {
+            top_margin: 44,
+            mon_w: 1280,
+            bar_x: 80,
+            bar_w: 1120,
+            cursor_cx: None,
+            fallback_align: Align::Right,
+        };
+        assert_eq!(p_1280_fallback.left_for_width(320), 880);
+
+        let p_1280_cursor = PopupPlacement {
+            cursor_cx: Some(1200),
+            ..p_1280_fallback
+        };
+        assert_eq!(p_1280_cursor.left_for_width(320), 952);
+
+        let p_rotated = PopupPlacement {
+            top_margin: 44,
+            mon_w: 1080,
+            bar_x: 100,
+            bar_w: 880,
+            cursor_cx: Some(950),
+            fallback_align: Align::Right,
+        };
+        assert_eq!(p_rotated.left_for_width(320), 752);
     }
 }

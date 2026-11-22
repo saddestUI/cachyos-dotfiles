@@ -7,7 +7,13 @@ use std::time::Duration;
 
 use zbus::blocking::Connection;
 
-const PREFERRED_BACKLIGHT: &str = "intel_backlight";
+const PREFERRED_BACKLIGHTS: &[&str] = &[
+    "intel_backlight",
+    "amdgpu_bl0",
+    "amdgpu_bl1",
+    "nvidia_0",
+    "nvidia_wmi_ec_backlight",
+];
 
 #[derive(Debug, PartialEq)]
 enum Action {
@@ -56,20 +62,29 @@ fn parse_action(args: &[String]) -> Result<Action, String> {
 
 fn find_backlight() -> Option<(String, PathBuf)> {
     let root = Path::new("/sys/class/backlight");
-    let pref = root.join(PREFERRED_BACKLIGHT);
-    if pref.join("brightness").exists() && pref.join("max_brightness").exists() {
-        return Some((PREFERRED_BACKLIGHT.to_string(), pref));
-    }
-    let entries = fs::read_dir(root).ok()?;
-    for entry in entries.flatten() {
-        let p = entry.path();
-        if p.join("brightness").exists() && p.join("max_brightness").exists() {
-            if let Some(name) = entry.file_name().to_str() {
-                return Some((name.to_string(), p));
-            }
+    for pref in PREFERRED_BACKLIGHTS {
+        let dir = root.join(pref);
+        if dir.join("brightness").exists() && dir.join("max_brightness").exists() {
+            return Some(((*pref).to_string(), dir));
         }
     }
-    None
+    let entries = fs::read_dir(root).ok()?;
+    let mut candidates: Vec<(String, PathBuf)> = entries
+        .flatten()
+        .filter_map(|entry| {
+            let p = entry.path();
+            if p.join("brightness").exists() && p.join("max_brightness").exists() {
+                entry
+                    .file_name()
+                    .to_str()
+                    .map(|name| (name.to_string(), p))
+            } else {
+                None
+            }
+        })
+        .collect();
+    candidates.sort_by(|a, b| a.0.cmp(&b.0));
+    candidates.into_iter().next()
 }
 
 fn read_i64(path: &Path) -> Option<i64> {
@@ -167,8 +182,8 @@ fn main() {
     };
 
     let Some((dev_name, dev_path)) = find_backlight() else {
-        eprintln!("Failed to locate backlight sysfs device");
-        std::process::exit(1);
+        // Desktop PCs without a built-in backlight should exit cleanly.
+        return;
     };
 
     let brightness_path = dev_path.join("brightness");

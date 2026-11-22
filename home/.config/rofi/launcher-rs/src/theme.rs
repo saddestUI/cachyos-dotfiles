@@ -76,7 +76,7 @@ impl Theme {
     }
 
     pub fn load() -> Self {
-        let home = PathBuf::from(env::var("HOME").unwrap_or_else(|_| "/home/samerim".into()));
+        let home = PathBuf::from(env::var("HOME").unwrap_or_else(|_| ".".into()));
         let path = home.join(".cache/wallfx/theme.txt");
         if let Ok(raw) = fs::read_to_string(&path) {
             let nums: Vec<u8> = raw

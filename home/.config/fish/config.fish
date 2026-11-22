@@ -1,4 +1,8 @@
-source /usr/share/cachyos-fish-config/cachyos-config.fish
+if test -f /usr/share/cachyos-fish-config/cachyos-config.fish
+    source /usr/share/cachyos-fish-config/cachyos-config.fish
+end
+
+fish_add_path -g "$HOME/.local/bin" "$HOME/.cargo/bin"
 
 # Keep fastfetch visible after clear and Ctrl+L
 function clear --wraps=clear --description 'Clear screen and show fastfetch'

@@ -3,7 +3,7 @@
 # Dynamically loads the wallfx wallpaper palette from kitty/theme.conf into Linux TTY colors.
 
 if [ "$TERM" = "linux" ]; then
-    THEME_FILE="/home/samerim/.config/kitty/theme.conf"
+    THEME_FILE="__USER_HOME__/.config/kitty/theme.conf"
 
     get_hex() {
         key="$1"

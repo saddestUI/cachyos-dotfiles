@@ -1,5 +1,5 @@
 /* Asura Linux style Rofi theme (CenterLauncher / AppLauncher) */
-@import "/home/samerim/.config/rofi/colors.rasi"
+@import "~/.config/rofi/colors.rasi"
 
 * {
     background-color: transparent;

@@ -35,8 +35,17 @@ EOF
         fi
         ;;
     battery)
-        bat_dir="/sys/class/power_supply/BAT1"
-        [[ -r "$bat_dir/capacity" ]] || exit 0
+        bat_dir=""
+        for d in /sys/class/power_supply/*; do
+            [[ -r "$d/type" && -r "$d/capacity" ]] || continue
+            [[ "$(tr -d '\r\n' < "$d/type")" == "Battery" ]] || continue
+            if [[ -r "$d/scope" && "$(tr -d '\r\n' < "$d/scope")" == "Device" ]]; then
+                continue
+            fi
+            bat_dir="$d"
+            break
+        done
+        [[ -n "$bat_dir" ]] || exit 0
         pct=$(tr -d '\r\n' < "$bat_dir/capacity")
         status=$(tr -d '\r\n' < "$bat_dir/status" 2>/dev/null || echo "Unknown")
         if [[ "$status" == "Charging" || "$status" == "Full" || "$status" == "Not charging" ]]; then

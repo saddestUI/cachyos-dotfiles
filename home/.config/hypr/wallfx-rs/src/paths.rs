@@ -8,7 +8,7 @@ use image::RgbImage;
 pub fn home_dir() -> PathBuf {
     std::env::var_os("HOME")
         .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("/home/samerim"))
+        .unwrap_or_else(|| PathBuf::from("."))
 }
 
 pub fn cache_root() -> PathBuf {

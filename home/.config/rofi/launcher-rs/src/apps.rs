@@ -32,7 +32,7 @@ pub struct UsageEntry {
 pub type UsageHistory = HashMap<String, UsageEntry>;
 
 fn history_path() -> PathBuf {
-    let home = PathBuf::from(env::var("HOME").unwrap_or_else(|_| "/home/samerim".into()));
+    let home = PathBuf::from(env::var("HOME").unwrap_or_else(|_| ".".into()));
     home.join(".cache/asura-launcher/history.json")
 }
 

@@ -10,7 +10,13 @@ use gtk::prelude::*;
 
 use crate::common::{make_section_label, run_cmd, Align, WidgetPopup};
 
-const DEVICE: &str = "intel_backlight";
+const PREFERRED_BACKLIGHTS: &[&str] = &[
+    "intel_backlight",
+    "amdgpu_bl0",
+    "amdgpu_bl1",
+    "nvidia_0",
+    "nvidia_wmi_ec_backlight",
+];
 const BRIGHTNESS_ICONS: [&str; 7] = ["󰃚", "󰃛", "󰃜", "󰃝", "󰃞", "󰃟", "󰃠"];
 
 fn brightness_icon(pct: i32) -> &'static str {
@@ -19,20 +25,46 @@ fn brightness_icon(pct: i32) -> &'static str {
     BRIGHTNESS_ICONS[idx.min(BRIGHTNESS_ICONS.len() - 1)]
 }
 
-fn read_sysfs_i64(file: &str) -> Option<i64> {
-    let path = format!("/sys/class/backlight/{DEVICE}/{file}");
+fn detect_backlight_device() -> Option<String> {
+    let root = std::path::Path::new("/sys/class/backlight");
+    for pref in PREFERRED_BACKLIGHTS {
+        let dir = root.join(pref);
+        if dir.join("brightness").is_file() && dir.join("max_brightness").is_file() {
+            return Some((*pref).to_string());
+        }
+    }
+    let entries = fs::read_dir(root).ok()?;
+    let mut names: Vec<String> = entries
+        .flatten()
+        .filter_map(|e| {
+            let p = e.path();
+            if p.join("brightness").is_file() && p.join("max_brightness").is_file() {
+                Some(e.file_name().to_string_lossy().into_owned())
+            } else {
+                None
+            }
+        })
+        .collect();
+    names.sort();
+    names.into_iter().next()
+}
+
+fn read_sysfs_i64(dev: &str, file: &str) -> Option<i64> {
+    let path = format!("/sys/class/backlight/{dev}/{file}");
     fs::read_to_string(path).ok()?.trim().parse::<i64>().ok()
 }
 
-fn get_brightness() -> i32 {
-    if let (Some(cur), Some(max_b)) = (read_sysfs_i64("brightness"), read_sysfs_i64("max_brightness"))
-    {
+fn get_brightness(dev: &str) -> i32 {
+    if let (Some(cur), Some(max_b)) = (
+        read_sysfs_i64(dev, "brightness"),
+        read_sysfs_i64(dev, "max_brightness"),
+    ) {
         if max_b > 0 {
             let pct = ((cur as f64 / max_b as f64) * 100.0).round() as i32;
             return pct.clamp(5, 100);
         }
     }
-    let (ok, out, _) = run_cmd(&["brightnessctl", "-d", DEVICE, "-m"]);
+    let (ok, out, _) = run_cmd(&["brightnessctl", "-d", dev, "-m"]);
     if ok {
         if let Some(pct_field) = out.split(',').nth(3) {
             if let Ok(val) = pct_field.trim_end_matches('%').parse::<i32>() {
@@ -46,7 +78,7 @@ fn get_brightness() -> i32 {
 fn smooth_brightness_bin() -> PathBuf {
     let home = std::env::var_os("HOME")
         .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from("/home/samerim"));
+        .unwrap_or_else(|| PathBuf::from("."));
     let bin = home.join(".local/bin/smooth-brightness");
     if bin.exists() {
         bin
@@ -72,6 +104,17 @@ fn spawn_brightness_helper(mode: &str, pct: i32) {
 
 pub fn build() -> gtk::Window {
     let popup = WidgetPopup::new("Яркость экрана", "󰃠", Align::Right, 290);
+
+    let Some(dev) = detect_backlight_device() else {
+        let card = gtk::Box::new(gtk::Orientation::Horizontal, 6);
+        card.style_context().add_class("card");
+        let lbl = gtk::Label::new(Some("Подсветка экрана не обнаружена"));
+        lbl.style_context().add_class("muted-text");
+        lbl.set_xalign(0.0);
+        card.pack_start(&lbl, true, true, 0);
+        popup.root_box.pack_start(&card, false, false, 0);
+        return popup.window;
+    };
 
     let card = gtk::Box::new(gtk::Orientation::Vertical, 8);
     card.style_context().add_class("card");
@@ -104,7 +147,7 @@ pub fn build() -> gtk::Window {
     let anim_gen = Rc::new(Cell::new(0u64));
     let debounce_timer: Rc<RefCell<Option<glib::SourceId>>> = Rc::new(RefCell::new(None));
 
-    let current = get_brightness();
+    let current = get_brightness(&dev);
     syncing.set(true);
     scale.set_value(current as f64);
     syncing.set(false);

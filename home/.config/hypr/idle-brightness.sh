@@ -2,7 +2,12 @@
 set -euo pipefail
 
 STATE_FILE="${XDG_RUNTIME_DIR:-/tmp}/hypridle-brightness"
-SMOOTH_BIN="/home/samerim/.local/bin/smooth-brightness"
+SMOOTH_BIN="$HOME/.local/bin/smooth-brightness"
+
+shopt -s nullglob
+BACKLIGHTS=(/sys/class/backlight/*)
+shopt -u nullglob
+[[ ${#BACKLIGHTS[@]} -gt 0 ]] || exit 0
 
 case "${1:-}" in
     dim)

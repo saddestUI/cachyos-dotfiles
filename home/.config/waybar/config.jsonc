@@ -108,6 +108,7 @@
   "clock": {
     "format": "{:%H:%M • %a, %d/%m}",
     "on-click": "~/.config/waybar/waybar-widgets calendar",
+    "on-click-right": "~/.config/waybar/waybar-widgets system",
     "tooltip": false
   },
 
@@ -140,7 +141,6 @@
   },
 
   "backlight": {
-    "device": "intel_backlight",
     "format": "{icon} {percent}%",
     "format-icons": ["󰃚", "󰃛", "󰃜", "󰃝", "󰃞", "󰃟", "󰃠"],
     "on-click": "~/.config/waybar/waybar-widgets brightness",
@@ -153,6 +153,7 @@
     "format": "󰂯",
     "format-disabled": "󰂲",
     "format-off": "󰂲",
+    "format-no-controller": "",
     "format-connected": "󰂱 {num_connections}",
     "on-click": "~/.config/waybar/waybar-widgets bluetooth",
     "tooltip-format": "Bluetooth: {status}",
@@ -178,8 +179,6 @@
   },
 
   "battery": {
-    "bat": "BAT1",
-    "adapter": "ADP1",
     "interval": 15,
     "states": {
       "warning": 30,

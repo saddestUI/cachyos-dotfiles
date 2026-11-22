@@ -579,6 +579,9 @@ fn render(ctx: &BtCtx, snap: &BluezSnapshot) {
         let name_lbl = gtk::Label::new(Some(&format!("{icon} {}", dev.name)));
         name_lbl.set_xalign(0.0);
         name_lbl.set_ellipsize(EllipsizeMode::End);
+        name_lbl.set_max_width_chars(24);
+        name_lbl.set_width_chars(1);
+        name_lbl.set_tooltip_text(Some(&dev.name));
 
         let right_text = dev.battery.clone().unwrap_or_else(|| {
             if dev.connected {
@@ -621,6 +624,8 @@ pub fn build() -> gtk::Window {
     let status_lbl = gtk::Label::new(None);
     status_lbl.style_context().add_class("widget-subtitle");
     status_lbl.set_xalign(0.0);
+    status_lbl.set_ellipsize(EllipsizeMode::End);
+    status_lbl.set_max_width_chars(32);
     popup.root_box.pack_start(&status_lbl, false, false, 0);
 
     popup

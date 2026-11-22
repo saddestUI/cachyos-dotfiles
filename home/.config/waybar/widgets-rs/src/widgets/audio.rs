@@ -135,6 +135,9 @@ fn populate_sinks(sinks_box: &gtk::Box, win: &gtk::Window, sync_out: &Rc<dyn Fn(
         let prefix = if is_default { "󰄬 " } else { "󰓃 " };
         let lbl = gtk::Label::new(Some(&format!("{prefix}{desc}")));
         lbl.set_ellipsize(EllipsizeMode::End);
+        lbl.set_max_width_chars(30);
+        lbl.set_width_chars(1);
+        lbl.set_tooltip_text(Some(&desc));
         lbl.set_xalign(0.0);
         btn.add(&lbl);
 
@@ -164,8 +167,13 @@ pub fn build() -> gtk::Window {
     popup
         .root_box
         .pack_start(&make_section_label("Устройство вывода"), false, false, 0);
+    let scroll = gtk::ScrolledWindow::new(gtk::Adjustment::NONE, gtk::Adjustment::NONE);
+    scroll.set_policy(gtk::PolicyType::Never, gtk::PolicyType::Automatic);
+    scroll.set_propagate_natural_height(true);
+    scroll.set_max_content_height(220);
     let sinks_box = gtk::Box::new(gtk::Orientation::Vertical, 4);
-    popup.root_box.pack_start(&sinks_box, false, false, 0);
+    scroll.add(&sinks_box);
+    popup.root_box.pack_start(&scroll, false, false, 0);
 
     populate_sinks(&sinks_box, &popup.window, &sync_out);
     popup.window

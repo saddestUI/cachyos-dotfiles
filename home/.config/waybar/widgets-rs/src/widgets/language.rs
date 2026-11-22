@@ -42,11 +42,27 @@ struct KbState {
     num: bool,
 }
 
+fn led_matches_suffix(entry_name: &str, suffix: &str) -> bool {
+    entry_name.ends_with(suffix)
+}
+
 fn read_led(name: &str) -> bool {
-    let path = format!("/sys/class/leds/input4::{name}/brightness");
-    fs::read_to_string(path)
-        .map(|s| s.trim() == "1")
-        .unwrap_or(false)
+    let suffix = format!("::{name}");
+    let Ok(entries) = fs::read_dir("/sys/class/leds") else {
+        return false;
+    };
+    for entry in entries.flatten() {
+        let fname = entry.file_name();
+        let fname_s = fname.to_string_lossy();
+        if led_matches_suffix(&fname_s, &suffix) {
+            if let Ok(val) = fs::read_to_string(entry.path().join("brightness")) {
+                if val.trim() == "1" {
+                    return true;
+                }
+            }
+        }
+    }
+    false
 }
 
 fn pick_active_keyboard(keyboards: &[KeyboardDev]) -> Option<&KeyboardDev> {
@@ -259,5 +275,7 @@ mod tests {
         let kb = pick_active_keyboard(&devs.keyboards).unwrap();
         assert_eq!(kb.name, "logitech-k850");
         assert_eq!(kb.active_layout_index, 1);
+        assert!(led_matches_suffix("input18::capslock", "::capslock"));
+        assert!(!led_matches_suffix("enp34s0-0::lan", "::capslock"));
     }
 }

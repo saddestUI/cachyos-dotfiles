@@ -1,0 +1,5 @@
+alacritty
+cachyos-alacritty-config
+cachyos-micro-settings
+meld
+micro

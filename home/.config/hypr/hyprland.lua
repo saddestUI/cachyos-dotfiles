@@ -15,6 +15,7 @@ hl.monitor({
 ---------------------
 
 -- Set programs that you use
+local home        = os.getenv("HOME") or ""
 local terminal    = "kitty"
 local fileManager = "thunar"
 local menu        = "~/.local/bin/asura-launcher"
@@ -37,7 +38,7 @@ local menu        = "~/.local/bin/asura-launcher"
    hl.exec_cmd("wl-paste --type text --watch cliphist store")
    hl.exec_cmd("wl-paste --type image --watch cliphist store")
    hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
-   hl.exec_cmd("/home/samerim/.config/hypr/sync-lock-theme.sh")
+   hl.exec_cmd(home .. "/.config/hypr/sync-lock-theme.sh")
  end)
 
 
@@ -51,6 +52,7 @@ hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("GSK_RENDERER", "gl")
 hl.env("GDK_DISABLE", "vulkan")
+pcall(require, "host")
 
 
 -----------------------
@@ -102,7 +104,7 @@ hl.config({
         rounding       = 12,
         rounding_power = 2,
 
-        -- Opaque windows avoid expensive multi-pass fullscreen blur on Intel HD 530;
+        -- Opaque windows avoid expensive multi-pass fullscreen blur on weaker GPUs;
         -- translucent surfaces (kitty, waybar, launcher) use explicit rules below.
         active_opacity   = 1.0,
         inactive_opacity = 1.0,
@@ -218,7 +220,7 @@ hl.config({
         cm_enabled     = false,
     },
     xwayland = {
-        enabled = false,
+        enabled = true,
     },
 })
 
@@ -260,13 +262,6 @@ hl.gesture({
     fingers = 3,
     direction = "horizontal",
     action = "workspace"
-})
-
--- Example per-device config
--- See https://wiki.hypr.land/configuring/core/devices/ for more
-hl.device({
-    name        = "epic-mouse-v1",
-    sensitivity = -0.5,
 })
 
 
@@ -349,7 +344,7 @@ hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(mainMod .. " + M", hl.dsp.exit())
-hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("/home/samerim/.config/hypr/lock.sh"))
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd(home .. "/.config/hypr/lock.sh"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + F", function()
@@ -771,5 +766,5 @@ hl.layer_rule({
 pcall(require, "theme")
 
 hl.on("config.reloaded", function()
-    hl.exec_cmd("/home/samerim/.config/hypr/sync-lock-theme.sh")
+    hl.exec_cmd(home .. "/.config/hypr/sync-lock-theme.sh")
 end)

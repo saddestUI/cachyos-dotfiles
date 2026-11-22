@@ -1,0 +1,11 @@
+# Kernels, headers, firmware
+^linux($|-)
+^(sof|alsa)-firmware$
+# GPU drivers & vendor Vulkan/VA-API/hybrid switching
+^(lib32-)?(nvidia|opencl-nvidia|libva-nvidia|vulkan-intel|vulkan-radeon|vulkan-nouveau|intel-media|amdvlk|xf86-video-|mesa-vdpau|libva-mesa|libva-intel|switcheroo-control)
+# CPU microcode
+^(intel|amd)-ucode$
+# Bootloaders, Plymouth, Snapper, filesystems, RAID/disk/biometrics, distro core
+^(limine|grub|efibootmgr|efitools|os-prober|plymouth|cachyos-plymouth|snapper|cachyos-snapper|btrfs-|xfsprogs|f2fs-tools|jfsutils|nilfs-utils|e2fsprogs|dosfstools|exfatprogs|ntfs-3g|lvm2|mdadm|dmraid|cryptsetup|device-mapper|fprintd|hdparm|smartmontools|hwdetect|hwinfo|chwd|cachyos-kernel-manager|cachyos-drm-awaiter|cachyos-mirrorlist|cachyos-v[34]-mirrorlist|cachyos-keyring|cachyos-hooks|cachyos-settings|cachyos-rate-mirrors)
+# Local non-AUR packages (installed via ArtCraft Launcher)
+^ai\.storyteller\.
