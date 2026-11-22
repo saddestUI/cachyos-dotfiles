@@ -25,7 +25,7 @@
 * **Блокировка и простой:** `hyprlock` + `hypridle` (на ноутбуках плавное затухание через `smooth-brightness`, блокировка, DPMS, сон, `inhibit_sleep = 3`).
 * **Вход в систему (`ly`):** `/etc/ly/config.ini` и `/etc/ly/startup.sh` с палитрой `wallfx` для TTY; при установке автоматически отключает предыдущий display manager и активирует `ly@tty2.service`.
 * **Браузер:** конфиг **Betterfox** ([firefox/user.js](firefox/user.js)) со Smoothfox.
-* **Сеть и софт:** `zapret-discord-youtube-linux`, `WordCraft`, `ArtCraft Launcher` *(пакеты `DeckCraft` / `GridCraft` / `PDFCraft` устанавливаются внутри ArtCraft Launcher)*, `dconf`, `samloader`, правило udev `99-uinput.rules`. При установке автоматически удаляются предустановленные `micro`, `meld` и `alacritty` (включая `cachyos-micro-settings` и `cachyos-alacritty-config`).
+* **Сеть и софт:** `zapret-discord-youtube-linux`, `WordCraft`, `ArtCraft Launcher` *(пакеты `DeckCraft` / `GridCraft` / `PDFCraft` устанавливаются внутри ArtCraft Launcher)*, `dconf`, `samloader`, правило udev `99-uinput.rules`. При установке автоматически удаляются предустановленные `micro`, `meld` и `alacritty` (включая `cachyos-micro-settings` и `cachyos-alacritty-config`), а временные кэши пакетов (`~/.cache/yay`, `pacman -Sc`) очищаются.
 
 ## Установка на чистой системе
 ```bash

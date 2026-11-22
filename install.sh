@@ -377,6 +377,7 @@ if $DRY_RUN; then
         echo "  /etc/ly/config.ini:   battery_id=${BAT_DEV:-null}, brightness_keys=$([[ -n "$BACKLIGHT_DEV" ]] && echo F5/F6 || echo null)"
         echo "  systemd services:     ly@tty2.service, nvidia-power=$HAS_NVIDIA, bluetooth=$HAS_BT, zapret=$(! $NO_ZAPRET && echo true || echo false)"
     fi
+    echo "  очистка кэша:         yay/pacman=$(! $SKIP_PACKAGES && echo true || echo false), cargo-registry=$REBUILD"
     exit 0
 fi
 
@@ -763,6 +764,20 @@ if [[ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]]; then
         setsid -f wl-paste --type image --watch cliphist store >/dev/null 2>&1 </dev/null
     hyprctl reload >/dev/null 2>&1 || true
     pkill -USR1 -x kitty 2>/dev/null || true
+fi
+
+# ---------------------------------------------------------------------------
+# 8. Очистка временных кэшей после установки
+# ---------------------------------------------------------------------------
+if ! $SKIP_PACKAGES; then
+    log "Очистка временного кэша пакетов..."
+    rm -rf "$HOME/.cache/yay"
+    if ! $NO_SYSTEM && command -v pacman >/dev/null 2>&1; then
+        sudo pacman -Sc --noconfirm >/dev/null 2>&1 || true
+    fi
+fi
+if $REBUILD; then
+    rm -rf "$HOME/.cargo/registry/cache" "$HOME/.cargo/registry/src"
 fi
 
 log "Готово! Перезайдите в сессию или перезагрузите ПК, чтобы все системные настройки (включая ly и systemd) вступили в силу."
