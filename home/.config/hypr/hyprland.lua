@@ -449,6 +449,77 @@ hl.on("window.active", function()
     end
 end)
 
+-- Auto-focus browser when an external app activates it (e.g. OAuth/confirmation links)
+local browser_classes = {
+    firefox = true,
+    ["org.mozilla.firefox"] = true,
+    ["firefox-esr"] = true,
+    ["firefox-developer-edition"] = true,
+    ["firefox-nightly"] = true,
+    zen = true,
+    ["zen-browser"] = true,
+    ["zen-alpha"] = true,
+    ["app.zen_browser.zen"] = true,
+    librewolf = true,
+    floorp = true,
+    waterfox = true,
+    chromium = true,
+    ["google-chrome"] = true,
+    ["brave-browser"] = true,
+    ["vivaldi-stable"] = true,
+    opera = true,
+    ["microsoft-edge"] = true,
+}
+
+local function is_browser_window(win)
+    if win == nil then return false end
+    local cls = (win.class or ""):lower()
+    local icls = (win.initial_class or ""):lower()
+    return browser_classes[cls] == true or browser_classes[icls] == true
+end
+
+local function find_window_by_addr(addr)
+    if not addr then return nil, nil end
+    for _, ws in ipairs(hl.get_workspaces()) do
+        if ws.id then
+            for _, w in ipairs(hl.get_workspace_windows(ws.id)) do
+                if w.address == addr then
+                    return w, ws
+                end
+            end
+        end
+    end
+    return nil, nil
+end
+
+hl.on("window.urgent", function(win)
+    local target = (type(win) == "userdata" or type(win) == "table") and win or hl.get_urgent_window()
+    if target == nil or not target.mapped or target.hidden then return end
+    if not is_browser_window(target) then return end
+
+    local active = hl.get_active_window()
+    if active ~= nil and active.address == target.address then return end
+
+    local target_addr = target.address
+    hl.timer(function()
+        local w, ws = find_window_by_addr(target_addr)
+        if w == nil or not w.mapped or w.hidden then return end
+        local cur = hl.get_active_window()
+        if cur ~= nil and cur.address == w.address then return end
+
+        if ws and ws.id then
+            peek_state[ws.id] = nil
+            if not ws.special then
+                local cur_ws = hl.get_active_workspace()
+                if not cur_ws or cur_ws.id ~= ws.id then
+                    hl.dispatch(hl.dsp.focus({ workspace = ws.id }))
+                end
+            end
+        end
+        hl.dispatch(hl.dsp.focus({ window = w }))
+    end, { timeout = 10, type = "oneshot" })
+end)
+
 local function switch_workspace(target)
     if target >= 1 and target <= max_occupied_id() + 1 then
         hl.dispatch(hl.dsp.focus({ workspace = target }))
